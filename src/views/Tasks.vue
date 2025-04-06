@@ -147,7 +147,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, reactive } from "vue";
+import { ref, reactive } from "vue";
 const showTop = ref(false);
 const showAdd = ref(false);
 
@@ -220,6 +220,17 @@ const loading = ref(false);
 const finished = ref(false);
 const themeVars = reactive({
   // cellBorderColor: "red",
+  switchActiveColor: "#5ca6db",
+  radioCheckedIconColor: "#5ca6db",
+  buttonPrimaryBackground: "#5ca6db",
+  buttonPrimaryBorderColor: "#5ca6db",
+  collapseItemContentBackground: "#f7f9fc",
+  dropdownMenuTitleActiveTextColor: "#5ca6db",
+  dropdownMenuTitleBackground: "#f7f9fc",
+  cellBackground: "#ffffff",
+  cellGroupInsetBackground: "#ffffff",
+  cellGroupInsetBorderRadius: "10px",
+  cellGroupInsetPadding: "0 4px",
 });
 
 const onLoad = () => {
@@ -248,31 +259,63 @@ const offset = ref({ x: -50, y: 600 });
 
 <style lang="less" scoped>
 .popup {
-  background-color: #f8f9fa;
+  background-color: #f7f9fc;
   border-top-left-radius: 5rem;
   border-top-right-radius: 5rem;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.03);
+
   .header {
     height: 12rem;
     font-size: 5rem;
     text-align: center;
     line-height: 12rem;
-    background-color: #f8f9fa;
-    border-bottom: 1px solid #ccc;
+    background-color: #f7f9fc;
+    border-bottom: 1px solid #e8eef4;
     margin-bottom: 5rem;
+    color: #5ca6db;
+    font-weight: bold;
   }
+
   .add-icon {
     font-size: 5rem;
     line-height: inherit;
+    color: #5ca6db;
   }
+
   .saveButton {
     margin: 5rem;
     width: 90%;
     height: 10rem;
     font-size: 5rem;
     line-height: 10rem;
-    background-color: #007bff;
+    background-color: #5ca6db;
     color: #fff;
     border-radius: 5rem;
+    border: none;
+    box-shadow: 0 2px 8px rgba(92, 166, 219, 0.3);
   }
+}
+
+:deep(.van-collapse) {
+  background-color: transparent;
+  margin: 10px 0;
+}
+
+:deep(.van-collapse-item) {
+  margin-bottom: 10px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+}
+
+:deep(.van-collapse-item__title) {
+  background-color: #ffffff;
+  color: #5ca6db;
+  font-weight: bold;
+}
+
+:deep(.van-floating-bubble) {
+  background-color: #5ca6db;
+  box-shadow: 0 2px 8px rgba(92, 166, 219, 0.4);
 }
 </style>

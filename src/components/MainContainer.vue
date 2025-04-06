@@ -52,7 +52,7 @@ const router = useRouter();
   width: 100%;
   height: 100vh;
   padding: 15rem 0;
-  background-color: #f5f5f5;
+  background-color: #f7f9fc;
 }
 
 .header {
@@ -60,10 +60,9 @@ const router = useRouter();
   top: 0;
   width: 100%;
   height: 15rem;
-  // background-color: ;
-  // 渐变色背景
-  background: linear-gradient(to right, #3fecff, #6149f6);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  // 修改为浅蓝色渐变，更加清新自然
+  background: linear-gradient(to right, #78c5f7, #5ca6db);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
   z-index: 999;
 }
 
@@ -71,8 +70,9 @@ const router = useRouter();
   margin: 0;
   font-size: 5rem;
   line-height: 15rem;
-  color: #333;
+  color: #fff;
   text-align: center;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .content {
@@ -89,7 +89,7 @@ const router = useRouter();
   display: flex;
   justify-content: space-around;
   align-items: center;
-  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.05);
   .footer-item {
     list-style-type: none;
     width: 33.33%;
@@ -97,6 +97,7 @@ const router = useRouter();
     text-align: center;
     font-size: 7rem;
     line-height: 15rem;
+    color: #5ca6db;
   }
 }
 </style>

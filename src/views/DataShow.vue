@@ -70,15 +70,16 @@ import { ref, computed, onMounted, onUnmounted, nextTick, reactive } from "vue";
 
 const themeVars = reactive({
   // cellBorderColor: "red",
-  // circleTextFontSize: "3rem",
+  circleTextFontSize: "3.5rem",
+  circleTextColor: "#5ca6db",
 });
 
 const currentRateForTemperature = ref(0); // 当前进度
 const currentRateForHumidity = ref(0); // 当前进度
 const currentRateForIllumination = ref(0); // 当前进度
 const gradientColor = {
-  "0%": "#3fecff",
-  "100%": "#6149f6",
+  "0%": "#78c5f7",
+  "100%": "#5ca6db",
 };
 const targetForTemperature = ref(100);
 const rateForTemperature = ref((80 / targetForTemperature.value) * 100); // 目标进度
@@ -212,6 +213,32 @@ onMounted(async () => {
         type: "line",
         data: yData,
         smooth: true,
+        lineStyle: {
+          color: "#5ca6db",
+          width: 4,
+        },
+        itemStyle: {
+          color: "#78c5f7",
+        },
+        areaStyle: {
+          color: {
+            type: "linear",
+            x: 0,
+            y: 0,
+            x2: 0,
+            y2: 1,
+            colorStops: [
+              {
+                offset: 0,
+                color: "rgba(120, 197, 247, 0.3)",
+              },
+              {
+                offset: 1,
+                color: "rgba(120, 197, 247, 0.1)",
+              },
+            ],
+          },
+        },
       },
     ],
     grid: {
@@ -244,6 +271,8 @@ onUnmounted(() => {
     padding: 5rem;
     margin-top: 3rem;
     background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
     .data-item {
       width: 25rem;
       height: 25rem;
@@ -251,7 +280,6 @@ onUnmounted(() => {
       .circle {
         width: 25rem;
         height: 25rem;
-
         // background-color: lightblue;
       }
     }
@@ -262,6 +290,8 @@ onUnmounted(() => {
     // padding-top: 10rem;
     margin-top: 10rem;
     background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
 
     .header {
       position: relative;
@@ -269,12 +299,14 @@ onUnmounted(() => {
       left: 0;
       font-size: 5rem;
       line-height: 10rem;
-      color: #333;
+      color: #5ca6db;
       text-align: center;
       width: 100%;
       height: 10rem;
       background-color: white;
       z-index: 999;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
     }
     .choice {
       position: absolute;
@@ -284,6 +316,7 @@ onUnmounted(() => {
       height: 10rem;
       // background-color: pink;
       margin-top: 10rem;
+      color: #5ca6db;
     }
   }
   .vedio {
@@ -291,6 +324,8 @@ onUnmounted(() => {
     height: 80rem;
     margin-top: 10rem;
     background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
   }
 }
 </style>
