@@ -1,4 +1,6 @@
 import { createApp } from "vue";
+import { createPinia } from "pinia";
+import piniaPersist from "pinia-plugin-persistedstate";
 import App from "./App.vue";
 import router from "./router";
 // 1. 引入你需要的组件
@@ -56,5 +58,9 @@ app.use(TimePicker);
 app.use(ActionBar);
 app.use(ActionBarIcon);
 app.use(ActionBarButton);
+
+const pinia = createPinia();
+pinia.use(piniaPersist);
+app.use(pinia);
 
 app.use(router).mount("#app");

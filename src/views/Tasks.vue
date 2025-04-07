@@ -15,8 +15,12 @@
               <template #reference>
                 <van-icon name="warning-o" size="20" color="#f90" />
               </template>
-              <div style="font-size: 3rem">
-                标准值：温度80℃，湿度80%，光照81lux
+              <div style="font-size: 3rem; padding: 1.5rem; color: #f90">
+                温度:{{ baseInformation().temperature }}， 空气湿度:{{
+                  baseInformation().humidity
+                }}， 土壤湿度:{{ baseInformation().soil_moisture }}， 光照:{{
+                  baseInformation().light_intensity
+                }}，
               </div>
             </van-popover>
           </template>
@@ -59,10 +63,12 @@
       class="popup"
       v-model:show="showAdd"
       round
-      :style="{ height: '150rem', width: '100rem' }"
+      :style="{ height: '120rem', width: '100rem' }"
       @close="onReset"
     >
-      <div class="header">添加任务</div>
+      <div class="header">
+        {{ typeForModel == "change" ? "编辑" : "添加" }}任务
+      </div>
       <van-form @submit="onSubmit" ref="formRef">
         <van-cell-group inset>
           <van-field
@@ -74,7 +80,7 @@
           />
           <van-cell title="任务类型">
             <van-radio-group v-model="checkedForTaskType">
-              <van-radio name="irrigate">灌溉任务</van-radio>
+              <van-radio name="watering">灌溉任务</van-radio>
               <van-radio name="cooling">降温任务</van-radio>
               <van-radio name="dimming">调光任务</van-radio>
             </van-radio-group>
@@ -90,7 +96,7 @@
             v-model="time"
             name="Time"
             label="任务时间"
-            placeholder="请输入任务时间，如：12:00"
+            placeholder="请输入任务时间，如：9:00"
             :rules="[{ required: true, message: '请填写任务时间' }]"
           />
           <van-field
@@ -104,36 +110,69 @@
             :rules="[{ required: true, message: '请填写任务持续时间' }]"
           />
         </van-cell-group>
-        <div style="margin: 16px">
+        <div style="margin-top: 10rem; padding: 0 10rem">
           <van-button round block type="primary" native-type="submit">
-            提交
+            保存
+          </van-button>
+        </div>
+        <div style="margin-top: 5rem; padding: 0 10rem">
+          <van-button round block type="danger" @click="deleteThisTask">
+            删除该任务
           </van-button>
         </div>
       </van-form>
     </van-popup>
     <van-collapse v-model="activeName" accordion>
-      <van-collapse-item title="灌溉任务" name="irrigate">
+      <van-collapse-item title="灌溉任务" name="irrigate" @click="onLoad">
         <van-list
-          v-model:loading="loading"
-          :finished="finished"
+          v-model:loading="loadingForWatering"
+          :finished="finishedForWatering"
           finished-text="没有更多了"
-          @load="onLoad"
+          @onload="onLoad"
         >
-          <!-- <van-cell title="单元格" value="内容" label="描述信息" /> -->
           <van-cell
-            v-for="item in list"
+            v-for="item in listForWatering"
             :key="item"
             :title="item.title"
             :label="item.detail"
             is-link
+            @click="showDetail(item.id)"
           />
         </van-list>
       </van-collapse-item>
       <van-collapse-item title="降温任务" name="cooling">
-        技术无非就是那些开发它的人的共同灵魂。
+        <van-list
+          v-model:loading="loadingForTemperature"
+          :finished="finishedForTemperature"
+          finished-text="没有更多了"
+          @onload="onLoad"
+        >
+          <van-cell
+            v-for="item in listForTemperature"
+            :key="item"
+            :title="item.title"
+            :label="item.detail"
+            is-link
+            @click="showDetail(item.id)"
+          />
+        </van-list>
       </van-collapse-item>
       <van-collapse-item title="调光任务" name="dimming">
-        在代码阅读过程中人们说脏话的频率是衡量代码质量的唯一标准。
+        <van-list
+          v-model:loading="loadingForLighting"
+          :finished="finishedForLighting"
+          finished-text="没有更多了"
+          @onload="onLoad"
+        >
+          <van-cell
+            v-for="item in listForLighting"
+            :key="item"
+            :title="item.title"
+            :label="item.detail"
+            is-link
+            @click="showDetail(item.id)"
+          />
+        </van-list>
       </van-collapse-item>
     </van-collapse>
     <van-floating-bubble
@@ -147,9 +186,19 @@
 </template>
 
 <script setup>
+import { baseInformation } from "@/store";
+import {
+  getTaskList,
+  getTaskDetail,
+  updateTask,
+  addTask,
+  deleteTask,
+} from "@/utils/api";
+import { showToast } from "vant";
 import { ref, reactive } from "vue";
 const showTop = ref(false);
 const showAdd = ref(false);
+const typeForModel = ref("change");
 
 // Or create a function to toggle it
 function togglePopup() {
@@ -157,13 +206,20 @@ function togglePopup() {
 }
 function toggleAdd() {
   showAdd.value = !showAdd.value;
+  typeForModel.value = "add";
 }
 
-const cropName = ref("小麦");
+const cropName = ref(JSON.parse(localStorage.getItem("crop"))?.name || "");
 const showTip = ref(false);
-const checkedIrrigate = ref(false);
-const checkedCooling = ref(false);
-const checkedDimming = ref(false);
+const checkedIrrigate = ref(
+  JSON.parse(localStorage.getItem("crop"))?.checkedIrrigate || false
+);
+const checkedCooling = ref(
+  JSON.parse(localStorage.getItem("crop"))?.checkedCooling || false
+);
+const checkedDimming = ref(
+  JSON.parse(localStorage.getItem("crop"))?.checkedDimming || false
+);
 const saveSettings = () => {
   // 保存设置
   console.log("保存设置：", {
@@ -172,6 +228,15 @@ const saveSettings = () => {
     checkedCooling: checkedCooling.value,
     checkedDimming: checkedDimming.value,
   });
+  localStorage.setItem(
+    "crop",
+    JSON.stringify({
+      name: cropName.value,
+      checkedIrrigate: checkedIrrigate.value,
+      checkedCooling: checkedCooling.value,
+      checkedDimming: checkedDimming.value,
+    })
+  );
   showTop.value = false;
 };
 
@@ -182,13 +247,14 @@ const show = ref(false);
 const time = ref("");
 const duration = ref(0);
 const formRef = ref(null);
+const taskId = ref("");
 
 const formatDate = (date) => `${date.getMonth() + 1}/${date.getDate()}`;
 const onConfirm = (value) => {
   show.value = false;
   date.value = formatDate(value);
 };
-const onSubmit = () => {
+const onSubmit = async () => {
   // 提交表单
   console.log("提交的任务信息：", {
     taskName: taskName.value,
@@ -197,6 +263,54 @@ const onSubmit = () => {
     time: time.value,
     duration: duration.value,
   });
+
+  if (typeForModel.value == "change") {
+    // 修改任务
+    const res = await updateTask(taskId.value, {
+      name: taskName.value,
+      type: checkedForTaskType.value,
+      day: date.value,
+      time: time.value,
+      duration: duration.value,
+    });
+    if (res.status === 200) {
+      // 处理成功情况
+      showToast("修改任务成功");
+    } else {
+      // 处理错误情况
+      showToast("修改任务失败，请稍后重试");
+    }
+  } else {
+    // 添加任务
+    const res = await addTask({
+      name: taskName.value,
+      type: checkedForTaskType.value,
+      day: date.value,
+      time: time.value,
+      duration: duration.value,
+    });
+    if (res.status === 200) {
+      // 处理成功情况
+      showToast("添加任务成功");
+    } else {
+      // 处理错误情况
+      showToast("添加任务失败，请稍后重试");
+    }
+  }
+
+  // 重置表单
+  onReset();
+};
+const deleteThisTask = async () => {
+  const res = await deleteTask(taskId.value);
+  console.log(res);
+  if (res.status === 200) {
+    // 处理成功情况
+    showToast("删除任务成功");
+  } else {
+    // 处理错误情况
+    showToast("删除任务失败，请稍后重试");
+  }
   // 重置表单
   onReset();
 };
@@ -215,9 +329,15 @@ const onReset = () => {
 // list
 const activeName = ref("");
 
-const list = ref([]);
-const loading = ref(false);
-const finished = ref(false);
+const listForWatering = ref([]);
+const listForTemperature = ref([]);
+const listForLighting = ref([]);
+const loadingForWatering = ref(false);
+const loadingForTemperature = ref(false);
+const loadingForLighting = ref(false);
+const finishedForWatering = ref(false);
+const finishedForTemperature = ref(false);
+const finishedForLighting = ref(false);
 const themeVars = reactive({
   // cellBorderColor: "red",
   switchActiveColor: "#5ca6db",
@@ -233,25 +353,67 @@ const themeVars = reactive({
   cellGroupInsetPadding: "0 4px",
 });
 
-const onLoad = () => {
-  // 异步更新数据
-  // setTimeout 仅做示例，真实场景中一般为 ajax 请求
-  setTimeout(() => {
-    for (let i = 0; i < 10; i++) {
-      list.value.push({
-        title: `任务 ${list.value.length + 1}`,
-        detail: `2025/01/01 12:00`,
-      });
-    }
+const onLoad = async () => {
+  const res = await getTaskList();
+  if (res.status === 200) {
+    // 处理成功情况
+    listForWatering.value = [];
+    listForTemperature.value = [];
+    listForLighting.value = [];
+    res.data.data.tasks.forEach((item) => {
+      if (item.type === "watering") {
+        listForWatering.value.push({
+          id: item.id,
+          title: item.name,
+          detail: `${item.day} ${item.time}`,
+        });
+      } else if (item.type === "cooling") {
+        listForTemperature.value.push({
+          id: item.id,
+          title: item.name,
+          detail: `${item.day} ${item.time}`,
+        });
+      } else if (item.type === "dimming") {
+        listForLighting.value.push({
+          id: item.id,
+          title: item.name,
+          detail: `${item.day} ${item.time}`,
+        });
+      }
+    });
+    loadingForWatering.value = false;
+    finishedForWatering.value = true;
+    loadingForTemperature.value = false;
+    finishedForTemperature.value = true;
+    loadingForLighting.value = false;
+    finishedForLighting.value = true;
+  } else {
+    // 处理错误情况
+    showToast("获取任务列表失败，请稍后重试");
+  }
+};
 
-    // 加载状态结束
-    loading.value = false;
-
-    // 数据全部加载完成
-    if (list.value.length >= 10) {
-      finished.value = true;
-    }
-  }, 1000);
+const showDetail = async (id) => {
+  typeForModel.value = "change";
+  taskId.value = id;
+  // 显示任务详情
+  showAdd.value = true;
+  // 根据 id 获取任务详情并显示
+  const res = await getTaskDetail(id);
+  if (res.status === 200) {
+    // 处理成功情况
+    const task = res.data.data;
+    taskName.value = task.name;
+    checkedForTaskType.value = task.type;
+    let month = task.day.split("/")[0];
+    let day = task.day.split("/")[1];
+    date.value = formatDate(new Date(2025, month - 1, day));
+    time.value = task.time;
+    duration.value = task.duration;
+  } else {
+    // 处理错误情况
+    showToast("获取任务详情失败，请稍后重试");
+  }
 };
 
 const offset = ref({ x: -50, y: 600 });

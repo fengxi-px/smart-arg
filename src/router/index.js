@@ -2,6 +2,7 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import DataShow from "../views/DataShow.vue";
 import Tasks from "../views/Tasks.vue";
 import Messages from "../views/Messages.vue";
+import Chat from "../views/Chat.vue";
 
 const routes = [
   {
@@ -18,6 +19,11 @@ const routes = [
     path: "/messages",
     name: "Messages",
     component: Messages,
+  },
+  {
+    path: "/chat",
+    name: "Chat",
+    component: Chat,
   },
 ];
 

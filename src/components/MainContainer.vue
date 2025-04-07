@@ -4,8 +4,16 @@
       <slot name="header">
         <h1 class="title">智链农境</h1>
       </slot>
+      <div class="chat">
+        <a
+          href="http://101.32.241.233:8080/ui/chat/1e1d91a836114468?mode=mobile"
+          target="_blank"
+          style="color: inherit"
+        >
+          <van-icon name="chat-o"
+        /></a>
+      </div>
     </div>
-
     <div class="content">
       <router-view />
     </div>
@@ -13,24 +21,43 @@
     <ul class="footer">
       <li class="footer-item">
         <van-icon
-          name="wap-home-o"
           class="icon"
-          @click="() => router.push('/')"
+          :name="choosedNav === 'home' ? 'wap-home' : 'wap-home-o'"
+          @click="
+            () => {
+              choosedNav = 'home';
+              router.push('/');
+            }
+          "
         />
       </li>
       <li class="footer-item">
         <van-icon
-          name="setting-o"
+          :name="choosedNav === 'setting' ? 'setting' : 'setting-o'"
           class="icon"
-          @click="() => router.push('/tasks')"
+          @click="
+            () => {
+              choosedNav = 'setting';
+              router.push('/tasks');
+            }
+          "
         />
       </li>
       <li class="footer-item">
         <van-icon
-          name="envelop-o"
+          :name="choosedNav === 'envelop' ? 'comment' : 'comment-o'"
           class="icon"
-          @click="() => router.push('/messages')"
-          badge="99+"
+          @click="
+            () => {
+              choosedNav = 'envelop';
+              router.push('/messages');
+            }
+          "
+          :badge="
+            baseInformation().newMessageNumber > 0
+              ? baseInformation().newMessageNumber
+              : null
+          "
         />
       </li>
     </ul>
@@ -39,8 +66,45 @@
 
 <script setup>
 import { useRouter } from "vue-router";
+import { baseInformation } from "@/store";
+import { ref } from "vue";
+
+const choosedNav = ref("home");
 
 const router = useRouter();
+
+const socket = new WebSocket("ws://localhost:3000");
+
+socket.onopen = function () {
+  console.log("WebSocket连接已建立");
+};
+
+socket.onmessage = function (event) {
+  const data = JSON.parse(event.data);
+
+  if (data.type === "warnings") {
+    // 处理预警消息
+    console.log("收到预警消息:", data.data);
+    baseInformation().newMessageNumber++;
+    localStorage.setItem(
+      "newMessageNumber",
+      JSON.stringify({
+        number: baseInformation().newMessageNumber,
+      })
+    );
+  } else if (data.type === "connection") {
+    // 处理连接消息
+    console.log(data.message);
+  }
+};
+
+socket.onclose = function () {
+  console.log("WebSocket连接已关闭");
+};
+
+socket.onerror = function (error) {
+  console.error("WebSocket错误:", error);
+};
 </script>
 
 <style lang="less" scoped>
@@ -73,6 +137,19 @@ const router = useRouter();
   color: #fff;
   text-align: center;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.chat {
+  width: 15rem;
+  height: 15rem;
+  position: absolute;
+  top: 0rem;
+  right: 0rem;
+  // background-color: red;
+  font-size: 8rem;
+  line-height: 15rem;
+  color: #fff;
+  text-align: center;
 }
 
 .content {
