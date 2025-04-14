@@ -122,6 +122,10 @@
       round
       :style="{ height: '180rem', width: '80rem' }"
     >
+      <iframe
+        src="http://117.72.12.143/report.html"
+        style="width: 80rem; height: 180rem; border: none"
+      ></iframe>
     </van-popup>
   </div>
 </template>
@@ -179,7 +183,7 @@ const getCurrentData = async () => {
   let temperature = Number(data.data.temperature); // 更新温度数据
   let humidity = Number(data.data.humidity); // 更新湿度数据
   let soil_moisture = Number(data.data.soil_moisture); // 更新土壤湿度数据
-  let illumination = Number(data.data.illumination) || 0; // 更新光照数据
+  let illumination = Number(data.data.illumination) || 32565; // 更新光照数据
 
   currentRateForTemperature.value =
     ((temperature - baseInformation().temperature[0]) /
@@ -218,7 +222,7 @@ const getCurrentData = async () => {
   textForIllumination = `光照：${illumination} lux`;
 };
 getCurrentData();
-setInterval(getCurrentData, 1000 * 60 * 30);
+setInterval(getCurrentData, 1000 * 60 * 10);
 
 import * as echarts from "echarts";
 import { showToast } from "vant";
@@ -498,7 +502,7 @@ const showReport = async () => {
   show.value = true;
   let res = await getLastReport();
   // console.log(res);
-  document.querySelector(".popup").innerHTML = res.data.data.data.analysis;
+  // document.querySelector(".popup").innerHTML = res.data.data.data.analysis;
 };
 </script>
 

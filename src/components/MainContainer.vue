@@ -5,6 +5,9 @@
         <h1 class="title">蔷影智联</h1>
       </slot>
       <div class="chat">
+        <!-- <div style="color: inherit" @click="showChat = !showChat">
+          <van-icon name="chat-o" />
+        </div> -->
         <a
           href="http://117.72.12.143:3000/chat/share?shareId=sxwtd0cf3exqitpu01rwfqa3"
           target="_blank"
@@ -62,6 +65,17 @@
       </li>
     </ul>
   </div>
+  <!-- <van-popup
+    class="popup"
+    v-model:show="showChat"
+    round
+    :style="{ height: '180rem', width: '80rem' }"
+  >
+    <iframe
+      src="http://117.72.12.143:3000/chat/share?shareId=sxwtd0cf3exqitpu01rwfqa3"
+      style="width: 80rem; height: 170rem; border: none"
+    ></iframe>
+  </van-popup> -->
 </template>
 
 <script setup>
@@ -87,6 +101,7 @@ localStorage.setItem(
     })
   )
 );
+const showChat = ref(true);
 </script>
 
 <style lang="less" scoped>

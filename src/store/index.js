@@ -3,10 +3,10 @@ import { getHistoryData } from "@/utils/api.js";
 
 export const baseInformation = defineStore("baseInformation", {
   state: () => ({
-    temperature: [20, 30], // 温度
-    humidity: [40, 60], // 湿度
-    soil_moisture: [30, 50], // 土壤湿度
-    light_intensity: [1000, 1200], // 光照强度
+    temperature: [15, 25], // 温度
+    humidity: [50, 70], // 湿度
+    soil_moisture: [60, 80], // 土壤湿度
+    light_intensity: [10000, 50000], // 光照强度
     isSafeForT: true,
     isSafeForH: true,
     isSafeForS: true,

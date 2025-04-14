@@ -8,7 +8,13 @@
     >
       <div class="header">设置</div>
       <van-cell-group inset>
-        <van-field v-model="cropName" label="当前作物" placeholder="作物名称">
+        <van-field
+          v-model="cropName"
+          label="当前作物"
+          placeholder="月季"
+          value="月季"
+          disabled
+        >
           <!-- 自定义右侧图标 -->
           <template #right-icon>
             <van-popover v-model:show="showTip" placement="top" trigger="click">
