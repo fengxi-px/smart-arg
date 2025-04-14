@@ -8,11 +8,11 @@ export function getRealTimeData() {
   });
 }
 // 获取历史数据
-export function getHistoryData(choice) {
+export function getHistoryData(days) {
   return request({
     url: "/home/getHistoryData",
     method: "get",
-    params: choice,
+    params: { days },
   });
 }
 
@@ -72,6 +72,48 @@ export function getMessageList() {
 export function getMessageDetail(id) {
   return request({
     url: `/message/warningDetail`,
+    method: "get",
+    params: { id },
+  });
+}
+
+// 获取未读预警数
+export function getUnreadCount() {
+  return request({
+    url: `/message/warnings/unread/count`,
+    method: "get",
+  });
+}
+
+// 已读预警
+export function readMessage(id) {
+  return request({
+    url: `/message/warnings/${id}/read`,
+    method: "put",
+    // params: { id },
+  });
+}
+
+// 获取最新报告
+export function getLastReport() {
+  return request({
+    url: "/home/getLastReport",
+    method: "get",
+  });
+}
+
+// 获取报告列表
+export function getReports() {
+  return request({
+    url: "/home/getReports",
+    method: "get",
+  });
+}
+
+// 获取报告详情
+export function getReportDetail(id) {
+  return request({
+    url: "/home/getReportDetail",
     method: "get",
     params: { id },
   });

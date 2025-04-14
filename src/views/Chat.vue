@@ -1,7 +1,7 @@
 <template>
   <div>
     <iframe
-      src="http://101.32.241.233:8080/ui/chat/1e1d91a836114468?mode=mobile"
+      src="http://117.72.12.143:3000/chat/share?shareId=sxwtd0cf3exqitpu01rwfqa3"
       style="width: 100rem; height: 180rem"
       frameborder="0"
       allow="microphone"

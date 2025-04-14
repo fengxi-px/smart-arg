@@ -2,11 +2,11 @@
   <div class="main-container">
     <div class="header">
       <slot name="header">
-        <h1 class="title">智链农境</h1>
+        <h1 class="title">蔷影智联</h1>
       </slot>
       <div class="chat">
         <a
-          href="http://101.32.241.233:8080/ui/chat/1e1d91a836114468?mode=mobile"
+          href="http://117.72.12.143:3000/chat/share?shareId=sxwtd0cf3exqitpu01rwfqa3"
           target="_blank"
           style="color: inherit"
         >
@@ -73,38 +73,20 @@ const choosedNav = ref("home");
 
 const router = useRouter();
 
-const socket = new WebSocket("ws://localhost:3000");
-
-socket.onopen = function () {
-  console.log("WebSocket连接已建立");
-};
-
-socket.onmessage = function (event) {
-  const data = JSON.parse(event.data);
-
-  if (data.type === "warnings") {
-    // 处理预警消息
-    console.log("收到预警消息:", data.data);
-    baseInformation().newMessageNumber++;
-    localStorage.setItem(
-      "newMessageNumber",
-      JSON.stringify({
-        number: baseInformation().newMessageNumber,
-      })
-    );
-  } else if (data.type === "connection") {
-    // 处理连接消息
-    console.log(data.message);
-  }
-};
-
-socket.onclose = function () {
-  console.log("WebSocket连接已关闭");
-};
-
-socket.onerror = function (error) {
-  console.error("WebSocket错误:", error);
-};
+// 初始化 WebSocket
+const store = baseInformation();
+store.initWebSocket();
+localStorage.setItem(
+  "crop",
+  JSON.stringify(
+    JSON.stringify({
+      name: store.crop,
+      checkedIrrigate: true,
+      checkedCooling: true,
+      checkedDimming: true,
+    })
+  )
+);
 </script>
 
 <style lang="less" scoped>

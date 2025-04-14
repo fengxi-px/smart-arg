@@ -1,6 +1,7 @@
 import axios from "axios";
 
 const baseURL = "http://localhost:3000"; // Default base URL
+// const baseURL = "http://192.168.20.227:3000"; // Default base URL
 
 // Create axios instance
 const service = axios.create({
@@ -11,7 +12,7 @@ const service = axios.create({
   },
 });
 
-// Request interceptor  
+// Request interceptor
 // service.interceptors.request.use(
 //   (config) => {
 //     // Add authorization token if exists

@@ -108,6 +108,21 @@
         ></div>
       </div>
     </div>
+    <van-button
+      style="width: 80rem; margin: 10rem; margin-bottom: 5rem"
+      type="primary"
+      size="large"
+      @click="showReport"
+    >
+      获取最新报告
+    </van-button>
+    <van-popup
+      class="popup"
+      v-model:show="show"
+      round
+      :style="{ height: '180rem', width: '80rem' }"
+    >
+    </van-popup>
   </div>
 </template>
 
@@ -156,9 +171,9 @@ const rateForSoilHumidity = ref((0 / targetForSoilHumidity) * 100); // 目标进
 const targetForIllumination = 0;
 const rateForIllumination = ref((0 / targetForIllumination) * 100); // 目标进度
 
-import { getHistoryData, getRealTimeData } from "@/utils/api.js"; // 假设你有一个API可以获取实时数据
+import { getRealTimeData, getLastReport } from "@/utils/api.js"; // 假设你有一个API可以获取实时数据
 
-setInterval(async () => {
+const getCurrentData = async () => {
   const { data } = await getRealTimeData(); // 获取实时数据
   // console.log(data.data);
   let temperature = Number(data.data.temperature); // 更新温度数据
@@ -201,7 +216,9 @@ setInterval(async () => {
   textForHumidity = `空气湿度：${humidity} %`;
   textForSoilHumidity = `土壤湿度：${soil_moisture} %`;
   textForIllumination = `光照：${illumination} lux`;
-}, 2000);
+};
+getCurrentData();
+setInterval(getCurrentData, 1000 * 60 * 30);
 
 import * as echarts from "echarts";
 import { showToast } from "vant";
@@ -326,7 +343,7 @@ onMounted(async () => {
 
   console.log(choiceTime, graphType);
   // 获取数据
-  await baseInformation().getHistoryData({ choice: 7 });
+  await baseInformation().getHistoryData(7);
   xData = baseInformation().historyData.dates.map((item) => {
     // 格式化日期为YYYY-MM-DD格式
     const date = new Date(item);
@@ -344,7 +361,7 @@ onMounted(async () => {
       data: xData,
       axisLabel: {
         interval: 0,
-        rotate: xData.length > 7 ? 45 : 0,
+        rotate: xData.length > 3 ? 45 : 0,
       },
     },
     yAxis: { type: "value" },
@@ -398,7 +415,7 @@ onUnmounted(() => {
 
 const updateGraph = async () => {
   // 获取数据
-  await baseInformation().getHistoryData({ choice: choiceTime });
+  await baseInformation().getHistoryData(choiceTime.value);
   xData = baseInformation().historyData.dates.map((item) => {
     // 格式化日期为YYYY-MM-DD格式
     const date = new Date(item);
@@ -430,7 +447,7 @@ const updateGraph = async () => {
       data: xData,
       axisLabel: {
         interval: 0,
-        rotate: xData.length > 7 ? 45 : 0,
+        rotate: xData.length > 3 ? 45 : 0,
       },
     },
     yAxis: { type: "value" },
@@ -474,6 +491,14 @@ const updateGraph = async () => {
   };
 
   chartInstance.setOption(option);
+};
+
+const show = ref(false);
+const showReport = async () => {
+  show.value = true;
+  let res = await getLastReport();
+  // console.log(res);
+  document.querySelector(".popup").innerHTML = res.data.data.data.analysis;
 };
 </script>
 
@@ -589,6 +614,12 @@ const updateGraph = async () => {
     background-color: white;
     border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+  }
+  .popup {
+    background-color: #f7f9fc;
+    border-top-left-radius: 5rem;
+    border-top-right-radius: 5rem;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.03);
   }
 }
 </style>

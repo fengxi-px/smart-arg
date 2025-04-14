@@ -220,6 +220,26 @@ const checkedCooling = ref(
 const checkedDimming = ref(
   JSON.parse(localStorage.getItem("crop"))?.checkedDimming || false
 );
+
+import { storeToRefs } from "pinia";
+
+const store = baseInformation();
+const { newMessageNumber } = storeToRefs(store); // 保持响应式
+
+// 发送消息示例（可选）
+function sendControlCommand(device, action, autoControl) {
+  if (store.socket.readyState === WebSocket.OPEN) {
+    const message = {
+      type: "control",
+      payload: {
+        device,
+        action,
+        autoControl,
+      },
+    };
+    store.socket.send(JSON.stringify(message));
+  }
+}
 const saveSettings = () => {
   // 保存设置
   console.log("保存设置：", {
@@ -237,6 +257,9 @@ const saveSettings = () => {
       checkedDimming: checkedDimming.value,
     })
   );
+  // 发送消息给服务器
+  sendControlCommand("fan", null, checkedCooling.value);
+  sendControlCommand("pump", null, checkedIrrigate.value);
   showTop.value = false;
 };
 
