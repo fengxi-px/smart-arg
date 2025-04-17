@@ -183,7 +183,7 @@ const getCurrentData = async () => {
   let temperature = Number(data.data.temperature); // 更新温度数据
   let humidity = Number(data.data.humidity); // 更新湿度数据
   let soil_moisture = Number(data.data.soil_moisture); // 更新土壤湿度数据
-  let illumination = Number(data.data.illumination) || 32565; // 更新光照数据
+  let illumination = Number(data.data.illumination) || 22565; // 更新光照数据
 
   currentRateForTemperature.value =
     ((temperature - baseInformation().temperature[0]) /

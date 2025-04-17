@@ -22,11 +22,11 @@
                 <van-icon name="warning-o" size="20" color="#f90" />
               </template>
               <div style="font-size: 3rem; padding: 1.5rem; color: #f90">
-                温度:{{ baseInformation().temperature }}， 空气湿度:{{
+                温度:{{ baseInformation().temperature }}℃， 空气湿度:{{
                   baseInformation().humidity
-                }}， 土壤湿度:{{ baseInformation().soil_moisture }}， 光照:{{
+                }}%， 土壤湿度:{{ baseInformation().soil_moisture }}%， 光照:{{
                   baseInformation().light_intensity
-                }}，
+                }}lux，
               </div>
             </van-popover>
           </template>
@@ -146,7 +146,7 @@
           />
         </van-list>
       </van-collapse-item>
-      <van-collapse-item title="降温任务" name="cooling">
+      <van-collapse-item title="降温任务" name="cooling" @click="onLoad">
         <van-list
           v-model:loading="loadingForTemperature"
           :finished="finishedForTemperature"
@@ -163,7 +163,7 @@
           />
         </van-list>
       </van-collapse-item>
-      <van-collapse-item title="调光任务" name="dimming">
+      <van-collapse-item title="调光任务" name="dimming" @click="onLoad">
         <van-list
           v-model:loading="loadingForLighting"
           :finished="finishedForLighting"

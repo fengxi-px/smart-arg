@@ -82,6 +82,7 @@
 import { useRouter } from "vue-router";
 import { baseInformation } from "@/store";
 import { ref } from "vue";
+import { getUnreadCount } from "@/utils/api";
 
 const choosedNav = ref("home");
 
@@ -101,6 +102,17 @@ localStorage.setItem(
     })
   )
 );
+(async () => {
+  const response = await getUnreadCount();
+  // console.log(response.data.data.count);
+  localStorage.setItem(
+    "newMessageNumber",
+    JSON.stringify({
+      number: response.data.data.count,
+    })
+  );
+  baseInformation().newMessageNumber = response.data.data.count;
+})();
 const showChat = ref(true);
 </script>
 
