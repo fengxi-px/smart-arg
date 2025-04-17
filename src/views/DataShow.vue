@@ -126,7 +126,7 @@
         src="http://117.72.12.143/report.html"
         style="width: 80rem; height: 180rem; border: none"
       ></iframe> -->
-      <iframe :srcdoc="mockHtml" style="width: 80rem; height: 180rem; border: none"></iframe>
+      <iframe :srcdoc="htmlTemplate" style="width: 80rem; height: 180rem; border: none"></iframe>
     </van-popup>
   </div>
 </template>
@@ -142,7 +142,6 @@ import {
   onUpdated,
 } from "vue";
 
-import {mockHtml} from "./mock.js"
 
 const themeVars = reactive({
   // cellBorderColor: "red",
@@ -501,16 +500,14 @@ const updateGraph = async () => {
 };
 
 const show = ref(false);
+let htmlTemplate = ref("wait")
 const showReport = async () => {
   show.value = true;
-  // let res = await getLastReport();
+  let res = await getLastReport();
+  htmlTemplate.value = res.data.data.data.analysis
   // console.log(res);
   // document.querySelector(".popup").innerHTML = res.data.data.data.analysis;
-  // document.querySelector(".popup").innerHTML = mockHtml
-  // nextTick(()=>{
-  //   // console.log(document.querySelector(".popup"))
-  //   document.querySelector(".popup").innerHTML = mockHtml
-  // })
+  
 };
 </script>
 
