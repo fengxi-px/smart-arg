@@ -28,6 +28,7 @@ import {
   ActionBar,
   ActionBarIcon,
   ActionBarButton,
+  Loading,
 } from "vant";
 // 2. 引入组件样式
 import "vant/lib/index.css";
@@ -58,6 +59,7 @@ app.use(TimePicker);
 app.use(ActionBar);
 app.use(ActionBarIcon);
 app.use(ActionBarButton);
+app.use(Loading);
 
 const pinia = createPinia();
 pinia.use(piniaPersist);

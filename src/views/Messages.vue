@@ -84,7 +84,7 @@
       :style="{ height: '180rem', width: '80rem' }"
     >
       <iframe
-        src="http://117.72.12.143/report.html"
+        :srcdoc="htmlTemplate"
         style="width: 80rem; height: 180rem; border: none"
       ></iframe>
     </van-popup>
@@ -214,9 +214,11 @@ const onLoadForReports = async () => {
 
 const showDetailForReport = ref({});
 const showForReport = ref(false);
+let htmlTemplate = ref("");
 const showReport = async (id, item) => {
   showForReport.value = true;
   const res = await getReportDetail(id);
+  htmlTemplate.value = res.data.data.data.analysis;
   // console.log(res);
   // document.querySelector(".report").innerHTML = res.data.data.data.analysis;
 };

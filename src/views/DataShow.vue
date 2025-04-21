@@ -126,7 +126,11 @@
         src="http://117.72.12.143/report.html"
         style="width: 80rem; height: 180rem; border: none"
       ></iframe> -->
-      <iframe :srcdoc="htmlTemplate" style="width: 80rem; height: 180rem; border: none"></iframe>
+      <iframe
+        :srcdoc="htmlTemplate"
+        style="width: 80rem; height: 180rem; border: none"
+      ></iframe>
+      <van-loading v-if="loadingForReport" type="spinner" color="#1989fa" />
     </van-popup>
   </div>
 </template>
@@ -141,7 +145,6 @@ import {
   reactive,
   onUpdated,
 } from "vue";
-
 
 const themeVars = reactive({
   // cellBorderColor: "red",
@@ -262,76 +265,6 @@ const onSelectType = (action) => {
   updateGraph();
 };
 
-// // 创建一个响应式引用来保存DOM元素
-// const chartDom = ref(null);
-// let chartInstance = null;
-
-// // 初始化ECharts实例并设置配置项（这里以折线图为例，但可灵活替换）
-// onMounted(async () => {
-//   await nextTick(); // 确保DOM已经渲染完成
-//   chartInstance = echarts.init(chartDom.value);
-//   const option = {
-//     // 这里是ECharts的配置项，可以根据需要绘制不同类型的图表
-//     title: {},
-//     tooltip: {},
-//     xAxis: {
-//       data: [
-//         "类别1",
-//         "类别2",
-//         "类别3",
-//         "类别4",
-//         "类别5",
-//         "类别1",
-//         "类别2",
-//         "类别3",
-//         "类别4",
-//         "类别5",
-//         "类别1",
-//         "类别2",
-//         "类别3",
-//         "类别4",
-//         "类别5",
-//       ],
-//     },
-//     yAxis: {},
-//     dataZoom: [
-//       {
-//         type: "slider",
-//         show: true,
-//         start: 0,
-//         end: 30,
-//       },
-//       // {
-//       //   type: "inside",
-//       //   start: 0,
-//       //   end: 30,
-//       // },
-//     ],
-//     series: [
-//       {
-//         name: "数据系列",
-//         type: "line", // 这里可以是'line'、'bar'、'pie'等，根据图表类型选择
-//         data: [
-//           120, 200, 150, 80, 70, 110, 130, 120, 200, 150, 80, 70, 110, 130, 120,
-//         ],
-//       },
-//     ],
-//     grid: {
-//       top: "15rem",
-//       // bottom: "40rem",
-//       // left: "60rem",
-//       // right: 0,
-//     },
-//   };
-//   chartInstance.setOption(option);
-// });
-
-// // 销毁ECharts实例
-// onUnmounted(() => {
-//   if (chartInstance != null && chartInstance.dispose) {
-//     chartInstance.dispose();
-//   }
-// });
 const chartDom = ref(null);
 let chartInstance = null;
 
@@ -500,14 +433,16 @@ const updateGraph = async () => {
 };
 
 const show = ref(false);
-let htmlTemplate = ref("wait")
+const loadingForReport = ref(false);
+let htmlTemplate = ref("");
 const showReport = async () => {
   show.value = true;
+  loadingForReport.value = true;
   let res = await getLastReport();
-  htmlTemplate.value = res.data.data.data.analysis
+  htmlTemplate.value = res.data.data.data.analysis;
+  loadingForReport.value = false;
   // console.log(res);
   // document.querySelector(".popup").innerHTML = res.data.data.data.analysis;
-  
 };
 </script>
 

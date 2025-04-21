@@ -93,14 +93,12 @@ const store = baseInformation();
 store.initWebSocket();
 localStorage.setItem(
   "crop",
-  JSON.stringify(
-    JSON.stringify({
-      name: store.crop,
-      checkedIrrigate: true,
-      checkedCooling: true,
-      checkedDimming: true,
-    })
-  )
+  JSON.stringify({
+    name: store.crop,
+    checkedIrrigate: true,
+    checkedCooling: true,
+    checkedDimming: true,
+  })
 );
 (async () => {
   const response = await getUnreadCount();
